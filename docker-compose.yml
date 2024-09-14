@@ -1,0 +1,30 @@
+version: "3"
+services:
+  nginx:
+    container_name: nginx-mini-route
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./public/:/var/www/html
+    networks:
+      - internal
+
+  php:
+    container_name: php-mini-route
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9000 remote_enable=1
+    volumes:
+      - ./public:/var/www/html
+      - /logs/php.log:/var/log/fpm-php.www.log
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge

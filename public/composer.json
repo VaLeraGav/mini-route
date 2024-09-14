@@ -1,0 +1,22 @@
+{
+    "name": "halon/mini-route",
+    "autoload": {
+        "psr-4": {
+            "MiniRoute\\": "src/",
+            "Test\\MiniRoute\\": "tests"
+        }
+    },
+    "require": {
+        "psr/http-message": "^1.0",
+        "psr/http-server-middleware": "^1.0",
+        "psr/http-factory": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false
+        }
+    }
+}
