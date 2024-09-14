@@ -7,12 +7,13 @@ use MiniRoute\Router;
 use MiniRoute\Application;
 use MiniRoute\Request;
 use MiniRoute\Response;
+use MiniRoute\MiddlewareInterface;
 
 echo "<pre>";
 
-class ValidationMiddleware
+class ValidationMiddleware implements MiddlewareInterface
 {
-    public function handle(Request $request, $next)
+    public function process(Request $request, callable $next)
     {
         if (!empty($request->getData()['name'])) {
             return 'Ошибка: поле "name" обязательно для заполнения.';
@@ -24,7 +25,7 @@ class ValidationMiddleware
 $routers = new Router();
 
 $router = $routers->addRoutes([
-    (new Route('home_page', '/', ['MiniRoute\\Controller\\Home1'])),
+    (new Route('home_page', '/', ['MiniRoute\\Controller\\Home1']))->add(new ValidationMiddleware()),
     new Route('home_page', '/sdf', ['MiniRoute\\Controller\\Home2']),
     (new Route('api_articles', '/view/article/{id}/{name}/', ['MiniRoute\\Controller\\ArticleController', 'getAll'], ['GET'])),
 ]);
@@ -32,20 +33,16 @@ $router = $routers->addRoutes([
 try {
     $route = $router->matchFromPath($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
-    print_r($route);
-
     $controller = new ($route->getController())();
     $methodName = $route->getAction();
 
-    if (!is_callable($controller)) {
-        $controller = [$controller, $methodName];
-    }
+    $callbackController = [$controller, $methodName];
 
-    $app = new Application($controller, $route->getMiddlewares());
+    $app = new Application($callbackController, $route->getMiddlewares());
     $body = $app->handle(new Request($route->getMethods(), $route->getAttributes()));
 
     $response = new Response(200, $body);
     $response->send();
 } catch (\Exception $exception) {
-    header("HTTP/1.0 404 Not Found");
+    header('HTTP/1.0 404 Not Found');
 }

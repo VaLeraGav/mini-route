@@ -26,7 +26,7 @@ class Pipeline
 
         foreach (array_reverse($this->middlewares) as $middleware) {
             $next = function ($request) use ($middleware, $next) {
-                return $middleware->handle($request, $next);
+                return $middleware->process($request, $next);
             };
         }
 

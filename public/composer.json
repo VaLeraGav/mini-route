@@ -14,6 +14,9 @@
     "require-dev": {
         "phpunit/phpunit": "*"
     },
+    "scripts": {
+        "test": "./vendor/bin/phpunit tests --testdox"
+    },
     "config": {
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": false
